@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seo from '../../components/Seo.astro';
+import GalleryGrid from '../../components/GalleryGrid.astro';
+import { getGalleries } from '../../lib/collections';
+import { breadcrumbSchema } from '../../lib/schema';
+import { SITE } from '../../lib/site';
+
+const galleries = await getGalleries();
+const origin = Astro.site ? Astro.site.origin : new URL(SITE.origin).origin;
+const breadcrumb = breadcrumbSchema(
+  [
+    { name: 'Início', path: '/' },
+    { name: 'Arquivo', path: '/archive' },
+  ],
+  origin,
+);
+---
+
+<Base title="Arquivo" description="Fotos das noites passadas da KUSH HOUSE." path="/archive">
+  <Seo schema={breadcrumb} />
+
+  <section class="section" aria-labelledby="archive-title">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Arquivo</p>
+        <h1 id="archive-title" class="section-head__title display-lg">Registro das noites</h1>
+        <p class="lede text-dim">
+          Toque numa foto para ampliar. Use as setas do teclado para navegar, Esc para fechar.
+        </p>
+      </header>
+
+      {
+        galleries.length > 0 ? (
+          <GalleryGrid galleries={galleries} />
+        ) : (
+          <p class="text-dim">Ainda sem fotos no arquivo.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>

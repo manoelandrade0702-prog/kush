@@ -1,0 +1,46 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  eyebrow?: string;
+  intro?: string;
+  headingLevel?: 2 | 3;
+  tight?: boolean;
+  align?: 'start' | 'center';
+}
+
+const { id, title, eyebrow, intro, headingLevel = 2, tight = false, align = 'start' } = Astro.props;
+
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const headingId = `${id}-title`;
+---
+
+<section id={id} class:list={['section', { 'section--tight': tight }]} aria-labelledby={headingId}>
+  <div class="container">
+    <header class:list={['section-head', `is-${align}`]} data-reveal>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <Heading id={headingId} class="section-head__title">{title}</Heading>
+      {intro && <p class="lede text-dim section-head__intro">{intro}</p>}
+    </header>
+    <div class="section-body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-head.is-center {
+    align-items: center;
+    text-align: center;
+    max-width: none;
+  }
+
+  .section-head.is-center .section-head__intro {
+    margin-inline: auto;
+  }
+
+  .section-head__title {
+    font-size: var(--step-4);
+    line-height: var(--leading-tight);
+  }
+</style>

@@ -1,0 +1,147 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { SITE } from '../lib/site';
+import { formatEventDate } from '../lib/dates';
+
+interface Props {
+  nextEvent?: CollectionEntry<'events'> | undefined;
+}
+
+const { nextEvent } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="container hero__inner">
+    <p class="eyebrow" data-reveal>Coletivo de música — {SITE.city}</p>
+
+    <h1 id="hero-title" class="hero__title" data-reveal>
+      Som para as<br /><span class="hero__accent">horas mortas</span>
+    </h1>
+
+    <p class="lede hero__lede" data-reveal>
+      A KUSH HOUSE organiza noites longas: sistemas de som pesados, seleções que não cabem em
+      playlist e uma casa que enche até o último set.
+    </p>
+
+    <div class="cluster hero__actions" data-reveal>
+      <a class="btn btn--primary" href="#proxima">Próxima noite</a>
+      <a class="btn btn--ghost" href="/events">Agenda completa</a>
+    </div>
+
+    {
+      nextEvent && (
+        <a class="hero__next" href="#proxima" data-reveal>
+          <span class="hero__next-label">A seguir</span>
+          <span class="hero__next-title">{nextEvent.data.title}</span>
+          <span class="hero__next-meta text-dim">
+            {formatEventDate(nextEvent.data.date)} — {nextEvent.data.venue}
+          </span>
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: clip;
+    padding-block: clamp(var(--space-2xl), 14vh, var(--space-3xl));
+    border-bottom: var(--hairline) solid var(--surface-border);
+  }
+
+  .hero__glow {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 70%;
+    background: radial-gradient(
+      50% 60% at 30% 0%,
+      color-mix(in oklab, var(--accent) 30%, transparent),
+      transparent 70%
+    );
+    filter: blur(30px);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__glow {
+      animation: hero-drift 18s var(--ease-in-out) infinite alternate;
+    }
+  }
+
+  @keyframes hero-drift {
+    to {
+      transform: translate3d(6%, 4%, 0) scale(1.15);
+      opacity: 0.75;
+    }
+  }
+
+  .hero__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  .hero__title {
+    font-size: var(--step-6);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    max-width: 16ch;
+  }
+
+  .hero__accent {
+    color: var(--accent);
+  }
+
+  .hero__lede {
+    max-width: 46ch;
+    font-size: var(--step-1);
+  }
+
+  .hero__actions {
+    --cluster-gap: var(--space-s);
+    margin-top: var(--space-2xs);
+  }
+
+  .hero__next {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: var(--space-l);
+    padding: var(--space-s) var(--space-m);
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text);
+    max-width: max-content;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .hero__next:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero__next-label {
+    font-family: var(--font-display);
+    font-size: var(--step--2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--accent);
+  }
+
+  .hero__next-title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 700;
+  }
+
+  .hero__next-meta {
+    font-size: var(--step--1);
+  }
+</style>

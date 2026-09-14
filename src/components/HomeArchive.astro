@@ -1,0 +1,99 @@
+---
+import ArrowLink from './ArrowLink.astro';
+
+interface StripPhoto {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  photos: StripPhoto[];
+  nights: number;
+}
+
+const { photos, nights } = Astro.props;
+---
+
+<section id="arquivo" class="section archive-teaser" aria-labelledby="archive-teaser-title">
+  <div class="container">
+    <header class="archive-teaser__head" data-reveal>
+      <p class="eyebrow">Arquivo</p>
+      <h2 id="archive-teaser-title" class="archive-teaser__title">
+        {nights} noites e contando
+      </h2>
+      <p class="lede text-dim">
+        O que aconteceu não volta, mas fica registrado. Fotos das últimas festas.
+      </p>
+    </header>
+  </div>
+
+  <ul class="archive-teaser__strip container" role="list" data-reveal>
+    {
+      photos.map((photo) => (
+        <li>
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            width={photo.width}
+            height={photo.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="container">
+    <p class="archive-teaser__more" data-reveal>
+      <ArrowLink href="/archive">Abrir o arquivo completo</ArrowLink>
+    </p>
+  </div>
+</section>
+
+<style>
+  .archive-teaser__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-xl);
+  }
+
+  .archive-teaser__title {
+    font-size: var(--step-4);
+  }
+
+  .archive-teaser__strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2xs);
+    margin: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .archive-teaser__strip {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .archive-teaser__strip img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border: var(--hairline) solid var(--surface-border);
+    border-radius: var(--radius);
+    filter: grayscale(0.45) contrast(1.05);
+  }
+
+  .archive-teaser__more {
+    margin-top: var(--space-l);
+  }
+
+  @media (min-width: 60rem) {
+    .archive-teaser__strip {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+</style>

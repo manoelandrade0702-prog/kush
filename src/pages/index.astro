@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import Seo from '../components/Seo.astro';
+import ThresholdGate from '../components/ThresholdGate.astro';
+import Hero from '../components/Hero.astro';
+import Manifesto from '../components/Manifesto.astro';
+import HomeNextEvent from '../components/HomeNextEvent.astro';
+import HomeResidents from '../components/HomeResidents.astro';
+import HomeArchive from '../components/HomeArchive.astro';
+import JoinSection from '../components/JoinSection.astro';
+import { getEvents, getArtists, getGalleries } from '../lib/collections';
+import { partitionEvents, nextEvent } from '../lib/events';
+import { organizationSchema, websiteSchema } from '../lib/schema';
+import { SITE } from '../lib/site';
+
+const now = new Date();
+const events = await getEvents();
+const { upcoming, past } = partitionEvents(events, now);
+const featured = nextEvent(events, now);
+const upcomingLive = upcoming.filter((event) => !event.data.cancelled).length;
+
+const artists = await getArtists();
+const galleries = await getGalleries();
+
+const residentNames = artists.map((artist) => artist.data.name);
+const stripPhotos = galleries
+  .flatMap((gallery) => gallery.data.photos)
+  .slice(0, 6)
+  .map((photo) => ({
+    src: photo.src,
+    alt: photo.alt,
+    width: photo.width,
+    height: photo.height,
+  }));
+
+const origin = Astro.site ? Astro.site.origin : new URL(SITE.origin).origin;
+---
+
+<Base title="Coletivo de música" description={SITE.description} path="/">
+  <Seo schema={[organizationSchema(origin), websiteSchema(origin)]} />
+
+  <ThresholdGate />
+  <Hero nextEvent={featured} />
+  <Manifesto />
+  <HomeNextEvent event={featured} upcomingCount={upcomingLive} />
+  <HomeResidents artists={artists.slice(0, 4)} names={residentNames} />
+  <HomeArchive photos={stripPhotos} nights={past.length} />
+  <JoinSection />
+</Base>

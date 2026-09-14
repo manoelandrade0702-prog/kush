@@ -1,0 +1,329 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatMonthYear } from '../lib/dates';
+
+interface Props {
+  galleries: CollectionEntry<'gallery'>[];
+}
+
+const { galleries } = Astro.props;
+
+const groups = galleries.map((gallery) => ({
+  entry: gallery,
+  photos: gallery.data.photos,
+}));
+const total = groups.reduce((sum, group) => sum + group.photos.length, 0);
+---
+
+<div class="gallery" data-gallery>
+  {
+    groups.map(({ entry, photos }) => (
+      <section class="gallery__group" aria-labelledby={`gal-${entry.id}`} data-reveal>
+        <header class="gallery__head">
+          <h2 id={`gal-${entry.id}`} class="gallery__title">
+            {entry.data.event}
+          </h2>
+          <p class="text-dim gallery__meta">
+            {formatMonthYear(entry.data.date)}
+            {entry.data.photographer ? ` — fotos de ${entry.data.photographer}` : ''}
+          </p>
+        </header>
+
+        <ul class="gallery__thumbs" role="list">
+          {photos.map((photo) => (
+            <li>
+              <button
+                type="button"
+                class="gallery__thumb"
+                data-lightbox-item
+                data-caption={`${entry.data.event} — ${formatMonthYear(entry.data.date)}`}
+                aria-haspopup="dialog"
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="visually-hidden">Ampliar imagem</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <dialog class="lightbox" aria-label="Galeria de fotos" data-lightbox>
+    <div class="lightbox__panel" data-dialog-panel>
+      <button type="button" class="lightbox__close" data-lightbox-close aria-label="Fechar galeria">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="square"
+            d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+
+      <figure class="lightbox__figure">
+        <img class="lightbox__img" alt="" data-lightbox-img width="1200" height="800" />
+        <figcaption class="lightbox__caption text-dim" data-lightbox-caption aria-live="polite">
+        </figcaption>
+      </figure>
+
+      <div class="lightbox__nav">
+        <button type="button" data-lightbox-prev aria-label="Foto anterior">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="square"
+              d="M15 5l-7 7 7 7"></path>
+          </svg>
+        </button>
+        <p class="lightbox__count" data-lightbox-count></p>
+        <button type="button" data-lightbox-next aria-label="Próxima foto">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="square"
+              d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<p class="visually-hidden" data-gallery-total>{total} fotos no arquivo.</p>
+
+<style>
+  .gallery__group + .gallery__group {
+    margin-top: var(--space-2xl);
+  }
+
+  .gallery__head {
+    margin-bottom: var(--space-m);
+  }
+
+  .gallery__title {
+    font-size: var(--step-2);
+  }
+
+  .gallery__meta {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-family: var(--font-display);
+  }
+
+  .gallery__thumbs {
+    display: grid;
+    gap: var(--space-2xs);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+    margin: 0;
+  }
+
+  .gallery__thumb {
+    display: block;
+    width: 100%;
+    padding: 0;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border: var(--hairline) solid var(--surface-border);
+    border-radius: var(--radius);
+    background: var(--bg-inset);
+  }
+
+  .gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.4) contrast(1.05);
+    transition:
+      transform var(--dur) var(--ease-out),
+      filter var(--dur) var(--ease-out);
+  }
+
+  .gallery__thumb:hover img,
+  .gallery__thumb:focus-visible img {
+    transform: scale(1.05);
+    filter: grayscale(0) contrast(1.05);
+  }
+
+  .lightbox {
+    max-width: min(64rem, calc(100vw - 2 * var(--gutter)));
+  }
+
+  .lightbox__panel {
+    position: relative;
+    padding: var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: var(--space-2xs);
+    right: var(--space-2xs);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    color: var(--text-dim);
+  }
+
+  .lightbox__close:hover {
+    color: var(--text);
+  }
+
+  .lightbox__figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .lightbox__img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+    background: var(--c-void);
+    border-radius: var(--radius);
+  }
+
+  .lightbox__caption {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-family: var(--font-display);
+  }
+
+  .lightbox__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+
+  .lightbox__nav button {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+  }
+
+  .lightbox__nav button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .lightbox__count {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-dim);
+  }
+</style>
+
+<script>
+  interface Slide {
+    src: string;
+    alt: string;
+    caption: string;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-gallery]');
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+
+  if (root && dialog) {
+    const imgEl = dialog.querySelector<HTMLImageElement>('[data-lightbox-img]');
+    const captionEl = dialog.querySelector<HTMLElement>('[data-lightbox-caption]');
+    const countEl = dialog.querySelector<HTMLElement>('[data-lightbox-count]');
+    const prevBtn = dialog.querySelector<HTMLButtonElement>('[data-lightbox-prev]');
+    const nextBtn = dialog.querySelector<HTMLButtonElement>('[data-lightbox-next]');
+    const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-lightbox-close]');
+    const panel = dialog.querySelector<HTMLElement>('[data-dialog-panel]');
+
+    const triggers = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-lightbox-item]'));
+
+    const slides: Slide[] = triggers.map((btn) => {
+      const img = btn.querySelector('img');
+      return {
+        src: img?.getAttribute('src') ?? '',
+        alt: img?.getAttribute('alt') ?? '',
+        caption: btn.dataset.caption ?? '',
+      };
+    });
+
+    let current = 0;
+
+    function render(): void {
+      const slide = slides[current];
+      if (!slide || !imgEl || !captionEl || !countEl) return;
+      imgEl.src = slide.src;
+      imgEl.alt = slide.alt;
+      captionEl.textContent = slide.caption;
+      countEl.textContent = `${current + 1} / ${slides.length}`;
+    }
+
+    function open(index: number): void {
+      if (!dialog) return;
+      current = index;
+      render();
+      dialog.showModal();
+      document.documentElement.classList.add('is-modal');
+      nextBtn?.focus();
+    }
+
+    function step(delta: number): void {
+      current = (current + delta + slides.length) % slides.length;
+      render();
+    }
+
+    triggers.forEach((btn, index) => {
+      btn.addEventListener('click', () => open(index));
+    });
+
+    prevBtn?.addEventListener('click', () => step(-1));
+    nextBtn?.addEventListener('click', () => step(1));
+    closeBtn?.addEventListener('click', () => dialog.close());
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        step(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        step(1);
+      }
+    });
+
+    dialog.addEventListener('click', (event) => {
+      if (!panel) return;
+      const rect = panel.getBoundingClientRect();
+      const outside =
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom;
+      if (outside) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('is-modal');
+    });
+  }
+</script>

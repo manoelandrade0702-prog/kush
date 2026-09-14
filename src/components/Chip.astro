@@ -1,0 +1,42 @@
+---
+interface Props {
+  variant?: 'default' | 'accent' | 'muted' | 'danger';
+  class?: string;
+}
+
+const { variant = 'default', class: className } = Astro.props;
+---
+
+<span class:list={['chip', `chip--${variant}`, className]}><slot /></span>
+
+<style>
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-display);
+    font-size: var(--step--2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: 999px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .chip--accent {
+    color: var(--accent);
+    border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+
+  .chip--muted {
+    border-style: dashed;
+  }
+
+  .chip--danger {
+    color: var(--c-danger);
+    border-color: color-mix(in oklab, var(--c-danger) 45%, transparent);
+  }
+</style>

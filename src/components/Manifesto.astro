@@ -1,0 +1,111 @@
+---
+const lines: ReadonlyArray<readonly [string, string, string]> = [
+  [
+    '01',
+    'A pista vem primeiro',
+    'Line-up existe para servir a noite, não o contrário. Ninguém é headliner da própria vaidade.',
+  ],
+  [
+    '02',
+    'Som acima de tudo',
+    'Investimento vai para o sistema antes de ir para a decoração. Grave que você sente no peito.',
+  ],
+  [
+    '03',
+    'Casa aberta',
+    'Preço justo, portas cedo, staff que trata bem. A cena só cresce se couber mais gente.',
+  ],
+];
+---
+
+<section id="manifesto" class="section manifesto" aria-labelledby="manifesto-title">
+  <div class="container">
+    <div class="manifesto__grid">
+      <div class="manifesto__intro" data-reveal>
+        <p class="eyebrow">Manifesto</p>
+        <h2 id="manifesto-title" class="manifesto__title">Três regras. O resto é gosto musical.</h2>
+      </div>
+
+      <ol class="manifesto__list" role="list">
+        {
+          lines.map(([num, head, body]) => (
+            <li class="manifesto__item" data-reveal>
+              <span class="manifesto__num" aria-hidden="true">
+                {num}
+              </span>
+              <h3 class="manifesto__head">{head}</h3>
+              <p class="text-dim">{body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto {
+    border-block: var(--hairline) solid var(--surface-border);
+    background: var(--bg-raised);
+  }
+
+  .manifesto__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 52rem) {
+    .manifesto__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+  }
+
+  .manifesto__title {
+    font-size: var(--step-4);
+    max-width: 16ch;
+  }
+
+  .manifesto__list {
+    display: grid;
+    gap: var(--space-l);
+    margin: 0;
+  }
+
+  .manifesto__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'num head'
+      'num body';
+    column-gap: var(--space-m);
+    row-gap: var(--space-3xs);
+    padding-bottom: var(--space-l);
+    border-bottom: var(--hairline) solid var(--surface-border);
+  }
+
+  .manifesto__item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .manifesto__num {
+    grid-area: num;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .manifesto__head {
+    grid-area: head;
+    font-size: var(--step-1);
+  }
+
+  .manifesto__item p {
+    grid-area: body;
+    max-width: 48ch;
+  }
+</style>

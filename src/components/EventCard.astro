@@ -1,0 +1,184 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Chip from './Chip.astro';
+import ArrowLink from './ArrowLink.astro';
+import { formatTime, getDateParts, toDatetimeAttr } from '../lib/dates';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+  featured?: boolean;
+  headingLevel?: 2 | 3;
+}
+
+const { event, featured = false, headingLevel = 3 } = Astro.props;
+const { data, id } = event;
+const parts = getDateParts(data.date);
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const icsHref = `/events/${id}.ics`;
+---
+
+<article
+  class:list={[
+    'event-card',
+    { 'event-card--featured': featured, 'event-card--cancelled': data.cancelled },
+  ]}
+  data-reveal
+>
+  <div class="event-card__date">
+    <time datetime={toDatetimeAttr(data.date)}>
+      <span class="event-card__day">{parts.day}</span>
+      <span class="event-card__mon">{parts.month}</span>
+      <span class="event-card__year">{parts.year}</span>
+    </time>
+  </div>
+
+  <div class="event-card__body">
+    {
+      (data.cancelled || data.ageRestriction || data.placeholder) && (
+        <div class="cluster event-card__badges">
+          {data.cancelled && <Chip variant="danger">Cancelada</Chip>}
+          {data.ageRestriction && <Chip>{data.ageRestriction}</Chip>}
+          {data.placeholder && <Chip variant="muted">Exemplo</Chip>}
+        </div>
+      )
+    }
+
+    <Heading class="event-card__title">{data.title}</Heading>
+
+    <p class="event-card__meta text-dim">
+      <span>{formatTime(data.date)}</span>
+      <span aria-hidden="true">·</span>
+      <span>{data.venue}, {data.city}</span>
+    </p>
+
+    {data.blurb && <p class="event-card__blurb">{data.blurb}</p>}
+
+    {
+      data.lineup.length > 0 && (
+        <p class="event-card__lineup">
+          <span class="visually-hidden">Line-up: </span>
+          {data.lineup.join(' · ')}
+        </p>
+      )
+    }
+
+    <div class="cluster event-card__actions">
+      {
+        data.ticketUrl && !data.cancelled && (
+          <a
+            class="btn btn--primary"
+            href={data.ticketUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Ingressos<span class="visually-hidden"> (abre em nova aba)</span>
+          </a>
+        )
+      }
+      <ArrowLink href={icsHref}>Adicionar à agenda</ArrowLink>
+    </div>
+  </div>
+</article>
+
+<style>
+  .event-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+    padding: var(--space-l) 0;
+    border-top: var(--hairline) solid var(--surface-border);
+  }
+
+  @media (min-width: 40rem) {
+    .event-card {
+      grid-template-columns: 7rem 1fr;
+      gap: var(--space-l);
+    }
+  }
+
+  .event-card--featured {
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--space-l);
+    background: var(--bg-raised);
+  }
+
+  .event-card--cancelled .event-card__title,
+  .event-card--cancelled .event-card__day {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    color: var(--text-dim);
+  }
+
+  .event-card__date time {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+  }
+
+  @media (min-width: 40rem) {
+    .event-card__date time {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  .event-card__day {
+    font-size: var(--step-4);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .event-card__mon {
+    font-size: var(--step-1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .event-card__year {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  .event-card__badges {
+    --cluster-gap: var(--space-2xs);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .event-card__title {
+    font-size: var(--step-3);
+    margin-bottom: var(--space-3xs);
+  }
+
+  .event-card--featured .event-card__title {
+    font-size: var(--step-4);
+  }
+
+  .event-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5ch;
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-family: var(--font-display);
+  }
+
+  .event-card__blurb {
+    margin-top: var(--space-s);
+    max-width: 52ch;
+  }
+
+  .event-card__lineup {
+    margin-top: var(--space-s);
+    color: var(--text-dim);
+  }
+
+  .event-card__actions {
+    margin-top: var(--space-m);
+    --cluster-gap: var(--space-m);
+  }
+</style>

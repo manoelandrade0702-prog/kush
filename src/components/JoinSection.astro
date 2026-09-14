@@ -1,0 +1,45 @@
+---
+import NewsletterForm from './NewsletterForm.astro';
+---
+
+<section id="lista" class="section join" aria-labelledby="join-title">
+  <div class="container join__grid">
+    <div class="join__copy" data-reveal>
+      <p class="eyebrow">Entrar na lista</p>
+      <h2 id="join-title" class="join__title">Saiba da próxima antes de lotar</h2>
+      <p class="text-dim">
+        Um e-mail curto quando abre venda e quando sai line-up. Nada além disso. Sair é um clique.
+      </p>
+    </div>
+
+    <div class="join__form" data-reveal>
+      <NewsletterForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .join {
+    border-top: var(--hairline) solid var(--surface-border);
+    background: var(--bg-raised);
+  }
+
+  .join__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 52rem) {
+    .join__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+      align-items: center;
+    }
+  }
+
+  .join__title {
+    font-size: var(--step-4);
+    max-width: 18ch;
+    margin-block: var(--space-2xs) var(--space-s);
+  }
+</style>

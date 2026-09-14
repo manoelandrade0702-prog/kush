@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site';
+
+const updated = '2026-09-09';
+---
+
+<Base title="Privacidade" description="Como a KUSH HOUSE trata (quase nenhum) dado." path="/legal">
+  <section class="section" aria-labelledby="legal-title">
+    <div class="container container--narrow prose">
+      <p class="eyebrow">Privacidade</p>
+      <h1 id="legal-title" class="display-lg">O que a gente guarda: quase nada</h1>
+
+      <p class="text-dim">
+        Última atualização: {updated}. Este é um site de demonstração com conteúdo provisório — os
+        contatos abaixo são exemplos e ainda não recebem mensagens.
+      </p>
+
+      <h2>Sem cookies e sem rastreadores</h2>
+      <p>
+        O site não usa cookies, não carrega analytics, pixels ou scripts de terceiros. As fontes são
+        servidas do próprio domínio. Não há banner de consentimento porque não há o que consentir.
+      </p>
+
+      <h2>Formulário da lista</h2>
+      <p>
+        O campo de e-mail não envia nada sozinho. Ao enviar, o navegador abre o seu aplicativo de
+        e-mail com uma mensagem pronta para <code>{SITE.newsletterEmail}</code>. Você revisa e envia
+        — ou não. O e-mail digitado só sai do seu dispositivo se você clicar em enviar no seu
+        próprio programa.
+      </p>
+
+      <h2>Armazenamento no seu navegador</h2>
+      <p>
+        Guardamos um único valor em <code>sessionStorage</code> para não repetir a animação de abertura
+        na mesma visita. Ele some quando você fecha a aba e nunca é enviado a lugar nenhum.
+      </p>
+
+      <h2>Registros do servidor</h2>
+      <p>
+        A hospedagem (Netlify) mantém logs técnicos de acesso, como qualquer servidor web, para
+        segurança e diagnóstico. Não temos controle fino sobre esses registros nem os cruzamos com
+        você.
+      </p>
+
+      <h2>Links externos</h2>
+      <p>
+        Botões de ingresso, players de mix e redes sociais levam a serviços de terceiros com
+        políticas próprias. Abrimos esses links em nova aba e sem repassar dados de navegação.
+      </p>
+
+      <h2>Contato</h2>
+      <p>
+        Dúvidas sobre privacidade: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <p><a href="/">← Voltar ao início</a></p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,14 @@
+# KUSH HOUSE — Netlify build config.
+#
+# Security and cache headers are NOT defined here. They are generated into
+# `dist/_headers` from `src/lib/security.ts` at build time (see the
+# `kush-house:netlify-headers` integration in astro.config.ts), which keeps
+# that TypeScript module the single source of truth.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"

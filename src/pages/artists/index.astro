@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seo from '../../components/Seo.astro';
+import ArtistGrid from '../../components/ArtistGrid.astro';
+import { getArtists } from '../../lib/collections';
+import { breadcrumbSchema } from '../../lib/schema';
+import { SITE } from '../../lib/site';
+
+const artists = await getArtists();
+const origin = Astro.site ? Astro.site.origin : new URL(SITE.origin).origin;
+
+const residents = artists.filter((a) => a.data.role === 'Residente');
+const guests = artists.filter((a) => a.data.role !== 'Residente');
+
+const breadcrumb = breadcrumbSchema(
+  [
+    { name: 'Início', path: '/' },
+    { name: 'Residentes', path: '/artists' },
+  ],
+  origin,
+);
+---
+
+<Base
+  title="Residentes"
+  description="O núcleo de selectors da KUSH HOUSE e os convidados de cada temporada."
+  path="/artists"
+>
+  <Seo schema={breadcrumb} />
+
+  <section class="section" aria-labelledby="artists-title">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Residentes</p>
+        <h1 id="artists-title" class="section-head__title display-lg">Quem toca aqui</h1>
+        <p class="lede text-dim">
+          Toque em qualquer nome para ver a bio e onde escutar. Perfis marcados como “exemplo” são
+          provisórios.
+        </p>
+      </header>
+
+      <h2 class="artists-subhead">Núcleo fixo</h2>
+      <ArtistGrid artists={residents} />
+
+      {
+        guests.length > 0 && (
+          <>
+            <h2 class="artists-subhead artists-subhead--spaced">Convidados recentes</h2>
+            <ArtistGrid artists={guests} />
+          </>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .artists-subhead {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-dim);
+    margin-bottom: var(--space-m);
+  }
+
+  .artists-subhead--spaced {
+    margin-top: var(--space-2xl);
+  }
+</style>

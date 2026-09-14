@@ -1,0 +1,177 @@
+---
+import { SITE, NAV, SOCIALS, isConfiguredHref } from '../lib/site';
+
+interface Props {
+  year: number;
+}
+
+const { year } = Astro.props;
+const socials = SOCIALS.filter((s) => isConfiguredHref(s.href));
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <span class="wordmark" aria-hidden="true">
+        <span class="wordmark__mark"></span>
+        <span>KUSH<span class="wordmark__thin">HOUSE</span></span>
+      </span>
+      <p class="text-dim">{SITE.tagline}</p>
+      <p class="site-footer__addr text-dim">
+        {SITE.city} — <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
+    </div>
+
+    <nav class="site-footer__nav" aria-label="Rodapé">
+      <ul role="list">
+        <li><a href="/">Início</a></li>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/legal">Privacidade</a></li>
+      </ul>
+    </nav>
+
+    {
+      socials.length > 0 && (
+        <ul class="site-footer__social" role="list" aria-label="Escutar e seguir">
+          {socials.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                rel={s.href.startsWith('http') ? 'me noopener noreferrer' : undefined}
+                target={s.href.startsWith('http') ? '_blank' : undefined}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path fill="currentColor" d={s.icon} />
+                </svg>
+                <span>
+                  {s.label}
+                  {s.href.startsWith('http') && (
+                    <span class="visually-hidden"> (abre em nova aba)</span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+
+  <div class="container site-footer__base">
+    <p class="text-dim">© {year} {SITE.name}. Projeto de demonstração — conteúdo provisório.</p>
+    <p class="text-dim">
+      Sem cookies, sem rastreadores. <a href="/legal">Como tratamos dados</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-3xl);
+    border-top: var(--hairline) solid var(--surface-border);
+    background: var(--bg-raised);
+    padding-block: var(--space-2xl) var(--space-l);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 48rem) {
+    .site-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: var(--space-l);
+    }
+  }
+
+  .site-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-width: 34ch;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .wordmark__mark {
+    width: 0.8rem;
+    height: 0.8rem;
+    background: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  .wordmark__thin {
+    color: var(--text-dim);
+    margin-left: 0.15em;
+  }
+
+  .site-footer__addr a {
+    color: inherit;
+  }
+
+  .site-footer__nav ul,
+  .site-footer__social {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    margin: 0;
+  }
+
+  .site-footer__nav a,
+  .site-footer__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .site-footer__nav a:hover,
+  .site-footer__social a:hover {
+    color: var(--accent);
+  }
+
+  .site-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-m);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-m);
+    border-top: var(--hairline) solid var(--surface-border);
+    font-size: var(--step--1);
+  }
+
+  .site-footer__base a {
+    color: var(--text);
+  }
+</style>

@@ -1,0 +1,506 @@
+/*
+ * KUSH HOUSE — global baseline.
+ * Loaded once from `Base.astro`. No `@import` of remote resources.
+ * Fonts are bundled from `@fontsource-variable/*` in the layout.
+ */
+
+@import './tokens.css';
+
+/* ----------------------------------------------------------------- reset */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + var(--space-m));
+  tab-size: 4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100svh;
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: var(--leading-normal);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+:where(a) {
+  color: inherit;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.18em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+:target {
+  scroll-margin-top: calc(var(--header-h) + var(--space-l));
+}
+
+/* ------------------------------------------------------------- focus */
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ------------------------------------------------------ a11y helpers */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--space-2xs);
+  left: var(--space-2xs);
+  z-index: 100;
+  padding: var(--space-2xs) var(--space-s);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  border-radius: var(--radius);
+  transform: translateY(-160%);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------- layout */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+.section {
+  padding-block: var(--space-2xl);
+}
+
+.section--tight {
+  padding-block: var(--space-xl);
+}
+
+.stack > * + * {
+  margin-top: var(--flow-space, var(--space-m));
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cluster-gap, var(--space-s));
+  align-items: center;
+}
+
+/* ------------------------------------------------------ typography bits */
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--accent);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.lede {
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+  color: var(--text);
+  max-width: 40ch;
+}
+
+.display-lg {
+  font-size: var(--step-4);
+  line-height: var(--leading-tight);
+}
+
+.display-xl {
+  font-size: var(--step-5);
+  line-height: var(--leading-tight);
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xl);
+  max-width: 46ch;
+}
+
+.text-dim {
+  color: var(--text-dim);
+}
+
+/* ----------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  min-height: 2.75rem;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--c-ember-bright);
+}
+
+.btn--ghost {
+  border-color: var(--surface-border-strong);
+  color: var(--text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------- link arrow */
+
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-size: var(--step--1);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.arrow-link > svg {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.arrow-link:hover {
+  color: var(--accent);
+}
+
+.arrow-link:hover > svg {
+  transform: translateX(4px);
+}
+
+/* ------------------------------------------------------------- rules */
+
+.rule {
+  border: 0;
+  border-top: var(--hairline) solid var(--surface-border);
+}
+
+/* ------------------------------------------------------- reveal-on-scroll */
+
+/*
+ * Pure CSS, no JavaScript: a scroll-driven animation fades each block in as
+ * it enters the viewport. Requires `animation-timeline: view()` support
+ * (Chromium 115+); everywhere else — and under reduced motion — the
+ * `[data-reveal]` elements simply render at their normal opacity. There is
+ * no hidden-by-default state that JS must undo, so content can never get
+ * stuck invisible.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------- grain */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* --------------------------------------------------------- marquee */
+
+.marquee {
+  overflow: hidden;
+  border-block: var(--hairline) solid var(--surface-border);
+  padding-block: var(--space-s);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  gap: var(--space-l);
+  width: max-content;
+  will-change: transform;
+  animation: marquee-scroll 38s linear infinite;
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.marquee__item[data-accent] {
+  color: var(--accent);
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+
+  .marquee__item + .marquee__item::before {
+    content: '·';
+    margin-right: var(--space-l);
+    color: var(--surface-border-strong);
+  }
+}
+
+/* ---------------------------------------------------------- dialog */
+
+dialog {
+  margin: auto;
+  max-width: min(40rem, calc(100vw - 2 * var(--gutter)));
+  width: 100%;
+  padding: 0;
+  color: var(--text);
+  background: var(--bg-raised);
+  border: var(--hairline) solid var(--surface-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pop);
+}
+
+dialog::backdrop {
+  background: rgb(4 4 6 / 0.72);
+  backdrop-filter: blur(3px);
+}
+
+dialog:not([open]) {
+  display: none;
+}
+
+html.is-modal {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open] {
+    animation: dialog-in var(--dur) var(--ease-out);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+/* ------------------------------------------------------------ prose */
+
+.prose {
+  max-width: 65ch;
+}
+
+.prose > * + * {
+  margin-top: var(--space-m);
+}
+
+.prose h2 {
+  margin-top: var(--space-xl);
+  font-size: var(--step-2);
+}
+
+.prose h3 {
+  margin-top: var(--space-l);
+  font-size: var(--step-1);
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.prose ul {
+  padding-left: 1.25em;
+  list-style: square;
+}
+
+.prose li + li {
+  margin-top: var(--space-2xs);
+}
+
+.prose code {
+  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: var(--bg-inset);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}

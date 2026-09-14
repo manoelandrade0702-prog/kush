@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["vitest/globals"],
+    "verbatimModuleSyntax": true,
+    "noEmit": true
+  },
+  "include": [".astro/types.d.ts", "src", "tests", "scripts", "*.config.mjs", "*.config.ts"],
+  "exclude": ["dist", "node_modules", "playwright-report", "test-results"]
+}

@@ -1,0 +1,7 @@
+# KUSH HOUSE
+# Replace the host below with the real domain before launch.
+User-agent: *
+Allow: /
+Disallow: /404
+
+Sitemap: https://kush-house.example/sitemap-index.xml

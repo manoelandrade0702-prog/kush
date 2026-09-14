@@ -1,0 +1,208 @@
+---
+import { SITE } from '../lib/site';
+import { buildNewsletterMailto } from '../lib/mailto';
+
+/**
+ * No backend: on submit the form composes a `mailto:` the visitor sends
+ * from their own client. Nothing leaves the browser automatically.
+ * `<noscript>` and the visible fallback link keep it usable with JS off.
+ */
+const fallbackHref = buildNewsletterMailto({
+  to: SITE.newsletterEmail,
+  from: '',
+  listName: SITE.name,
+});
+---
+
+<form
+  class="newsletter"
+  data-newsletter
+  data-to={SITE.newsletterEmail}
+  data-list={SITE.name}
+  novalidate
+>
+  <div class="newsletter__row">
+    <div class="newsletter__field">
+      <label for="nl-email">Seu e-mail</label>
+      <input
+        id="nl-email"
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        spellcheck="false"
+        maxlength="254"
+        required
+        placeholder="voce@exemplo.com"
+        aria-describedby="nl-hint nl-status"
+        data-nl-input
+      />
+    </div>
+
+    <div class="newsletter__gotcha" aria-hidden="true">
+      <label for="nl-company">Não preencha este campo</label>
+      <input
+        id="nl-company"
+        name="company"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        data-nl-hp
+      />
+    </div>
+
+    <button class="btn btn--primary newsletter__submit" type="submit">Entrar na lista</button>
+  </div>
+
+  <p id="nl-hint" class="newsletter__hint text-dim">
+    Sem spam, sem rastreadores. O botão abre seu aplicativo de e-mail já preenchido — nada é enviado
+    sem você confirmar.
+  </p>
+
+  <p id="nl-status" class="newsletter__status" role="status" aria-live="polite"></p>
+
+  <noscript>
+    <p class="newsletter__hint">
+      Com JavaScript desativado: escreva para
+      <a href={fallbackHref}>{SITE.newsletterEmail}</a> com o assunto “Entrar na lista”.
+    </p>
+  </noscript>
+</form>
+
+<style>
+  .newsletter {
+    max-width: 34rem;
+  }
+
+  .newsletter__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    align-items: end;
+  }
+
+  .newsletter__field {
+    flex: 1 1 16rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .newsletter__field label {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-dim);
+  }
+
+  .newsletter__field input {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg-inset);
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+  }
+
+  .newsletter__field input::placeholder {
+    color: var(--text-dim);
+    opacity: 1;
+  }
+
+  .newsletter__field input:focus-visible {
+    border-color: var(--accent);
+  }
+
+  .newsletter__field input[aria-invalid='true'] {
+    border-color: var(--c-danger);
+  }
+
+  .newsletter__submit {
+    flex: 0 0 auto;
+  }
+
+  .newsletter__gotcha {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .newsletter__hint {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    max-width: 46ch;
+  }
+
+  .newsletter__status {
+    margin-top: var(--space-2xs);
+    min-height: 1.4em;
+    font-size: var(--step--1);
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent-2);
+  }
+
+  .newsletter__status.is-error {
+    color: var(--c-danger);
+  }
+</style>
+
+<script>
+  import { isPlausibleEmail, buildNewsletterMailto } from '../lib/mailto';
+
+  const form = document.querySelector<HTMLFormElement>('[data-newsletter]');
+
+  if (form) {
+    const input = form.querySelector<HTMLInputElement>('[data-nl-input]');
+    const honeypot = form.querySelector<HTMLInputElement>('[data-nl-hp]');
+    const status = form.querySelector<HTMLElement>('#nl-status');
+    const to = form.dataset.to ?? '';
+    const list = form.dataset.list ?? 'a lista';
+    const mountedAt = Date.now();
+
+    const setStatus = (message: string, isError: boolean): void => {
+      if (!status) return;
+      status.textContent = message;
+      status.classList.toggle('is-error', isError);
+    };
+
+    input?.addEventListener('input', () => {
+      input.removeAttribute('aria-invalid');
+      setStatus('', false);
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!input) return;
+
+      // Bot: filled the hidden field. Drop silently.
+      if (honeypot && honeypot.value.trim() !== '') return;
+
+      // Field validity always drives the visible state, so real feedback
+      // never gets masked by the timing heuristic below.
+      const value = input.value.trim();
+      if (!isPlausibleEmail(value)) {
+        input.setAttribute('aria-invalid', 'true');
+        setStatus('Confira o e-mail digitado.', true);
+        input.focus();
+        return;
+      }
+      input.removeAttribute('aria-invalid');
+
+      // Bot: a valid-looking address submitted implausibly fast after load.
+      if (Date.now() - mountedAt < 1200) {
+        setStatus('Aguarde um instante e tente novamente.', true);
+        return;
+      }
+
+      setStatus('Abrindo seu aplicativo de e-mail — confirme o envio por lá.', false);
+      window.location.href = buildNewsletterMailto({ to, from: value, listName: list });
+    });
+  }
+</script>

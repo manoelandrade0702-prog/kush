@@ -1,0 +1,213 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seo from '../../components/Seo.astro';
+import EventCard from '../../components/EventCard.astro';
+import { getEvents } from '../../lib/collections';
+import { partitionEvents } from '../../lib/events';
+import { eventSchema, breadcrumbSchema } from '../../lib/schema';
+import { SITE } from '../../lib/site';
+
+const now = new Date();
+const events = await getEvents();
+const { upcoming, past } = partitionEvents(events, now);
+
+const origin = Astro.site ? Astro.site.origin : new URL(SITE.origin).origin;
+const pageUrl = new URL('/events', origin).href;
+
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${SITE.name} — Agenda`,
+  itemListElement: [...upcoming, ...past].map((event, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: eventSchema(
+      {
+        title: event.data.title,
+        start: event.data.date,
+        end: event.data.endDate,
+        venue: event.data.venue,
+        city: event.data.city,
+        address: event.data.address,
+        url: `${pageUrl}#${event.id}`,
+        cancelled: event.data.cancelled,
+        lineup: event.data.lineup,
+        ticketUrl: event.data.ticketUrl,
+        image: event.data.poster,
+        description: event.data.blurb,
+      },
+      origin,
+    ),
+  })),
+};
+
+const breadcrumb = breadcrumbSchema(
+  [
+    { name: 'Início', path: '/' },
+    { name: 'Agenda', path: '/events' },
+  ],
+  origin,
+);
+---
+
+<Base
+  title="Agenda"
+  description="Próximas festas e o histórico de noites da KUSH HOUSE."
+  path="/events"
+>
+  <Seo schema={[itemList, breadcrumb]} />
+
+  <section class="section" aria-labelledby="agenda-title">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Agenda</p>
+        <h1 id="agenda-title" class="section-head__title display-lg">Todas as noites</h1>
+        <p class="lede text-dim">
+          {upcoming.length} por vir, {past.length} no retrovisor. Datas no fuso de {SITE.city}.
+        </p>
+      </header>
+
+      <div class="filter" role="group" aria-label="Filtrar agenda" data-events-filter>
+        <a class="filter__btn" href="#proximas" data-filter="upcoming" aria-current="true">
+          Próximas <span aria-hidden="true">({upcoming.length})</span>
+        </a>
+        <a class="filter__btn" href="#passadas" data-filter="past" aria-current="false">
+          Já aconteceram <span aria-hidden="true">({past.length})</span>
+        </a>
+      </div>
+
+      <p class="visually-hidden" role="status" data-events-status></p>
+
+      <div id="proximas" data-events-group="upcoming">
+        <h2 class="events-group__label">Próximas</h2>
+        {
+          upcoming.length > 0 ? (
+            upcoming.map((event) => (
+              <div id={event.id}>
+                <EventCard event={event} headingLevel={3} />
+              </div>
+            ))
+          ) : (
+            <p class="events-empty">
+              Nada marcado agora. A próxima é anunciada primeiro na <a href="/#lista">lista</a>.
+            </p>
+          )
+        }
+      </div>
+
+      <div id="passadas" data-events-group="past">
+        <h2 class="events-group__label">Já aconteceram</h2>
+        {
+          past.length > 0 ? (
+            past.map((event) => (
+              <div id={event.id}>
+                <EventCard event={event} headingLevel={3} />
+              </div>
+            ))
+          ) : (
+            <p class="events-empty">O arquivo começa depois da primeira noite.</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-bottom: var(--space-l);
+  }
+
+  .filter__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4ch;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+    color: var(--text-dim);
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+
+  .filter__btn[aria-current='true'] {
+    color: var(--text-on-accent);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .events-group__label {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-dim);
+    margin-bottom: var(--space-2xs);
+  }
+
+  #passadas {
+    margin-top: var(--space-2xl);
+  }
+
+  .events-empty {
+    padding: var(--space-l) 0;
+    border-top: var(--hairline) solid var(--surface-border);
+    color: var(--text-dim);
+  }
+
+  .events-empty a {
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  type FilterKey = 'upcoming' | 'past';
+
+  const filter = document.querySelector<HTMLElement>('[data-events-filter]');
+  const upcomingGroup = document.querySelector<HTMLElement>('[data-events-group="upcoming"]');
+  const pastGroup = document.querySelector<HTMLElement>('[data-events-group="past"]');
+  const status = document.querySelector<HTMLElement>('[data-events-status]');
+
+  if (filter && upcomingGroup && pastGroup) {
+    const buttons = Array.from(filter.querySelectorAll<HTMLAnchorElement>('[data-filter]'));
+
+    const countIn = (group: HTMLElement): number => group.querySelectorAll('.event-card').length;
+
+    const apply = (key: FilterKey): void => {
+      upcomingGroup.hidden = key !== 'upcoming';
+      pastGroup.hidden = key !== 'past';
+      for (const button of buttons) {
+        button.setAttribute('aria-current', button.dataset.filter === key ? 'true' : 'false');
+      }
+      if (status) {
+        const shown = key === 'upcoming' ? countIn(upcomingGroup) : countIn(pastGroup);
+        status.textContent =
+          key === 'upcoming'
+            ? `Mostrando ${shown} noites por vir.`
+            : `Mostrando ${shown} noites passadas.`;
+      }
+      history.replaceState(null, '', key === 'past' ? '#passadas' : '#proximas');
+    };
+
+    for (const button of buttons) {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        apply((button.dataset.filter as FilterKey | undefined) ?? 'upcoming');
+      });
+    }
+
+    apply(window.location.hash === '#passadas' ? 'past' : 'upcoming');
+  }
+</script>

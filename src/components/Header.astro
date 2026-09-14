@@ -1,0 +1,297 @@
+---
+import { NAV } from '../lib/site';
+
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+function isCurrent(href: string): boolean {
+  const clean = href.replace(/\/+$/, '') || '/';
+  if (clean === '/') return here === '/';
+  return here === clean || here.startsWith(`${clean}/`);
+}
+---
+
+<header class="site-header" data-site-header>
+  <div class="container site-header__inner">
+    <a class="wordmark" href="/" aria-label="KUSH HOUSE — página inicial">
+      <span class="wordmark__mark" aria-hidden="true"></span>
+      <span>KUSH<span class="wordmark__thin">HOUSE</span></span>
+    </a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-nav-toggle
+    >
+      <span class="visually-hidden">Menu</span>
+      <span class="nav-toggle__glyph" aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Navegação principal" data-nav>
+      <ul role="list" class="site-nav__list">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                class="site-nav__link"
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li class="site-nav__cta">
+          <a class="btn btn--ghost" href="/#lista">Entrar na lista</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in oklab, var(--bg) 86%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: var(--hairline) solid var(--surface-border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    min-height: var(--header-h);
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--step-0);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .wordmark__mark {
+    width: 0.9rem;
+    height: 0.9rem;
+    background: var(--accent);
+    box-shadow: 0 0 18px -2px var(--accent);
+    transform: rotate(45deg);
+  }
+
+  .wordmark__thin {
+    color: var(--text-dim);
+    margin-left: 0.15em;
+  }
+
+  .nav-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: var(--hairline) solid var(--surface-border-strong);
+    border-radius: var(--radius);
+  }
+
+  .nav-toggle__glyph,
+  .nav-toggle__glyph::before,
+  .nav-toggle__glyph::after {
+    content: '';
+    display: block;
+    width: 1.15rem;
+    height: 2px;
+    background: var(--text);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .nav-toggle__glyph::before {
+    transform: translateY(-6px);
+  }
+
+  .nav-toggle__glyph::after {
+    transform: translateY(4px);
+  }
+
+  .site-header[data-open] .nav-toggle__glyph {
+    background: transparent;
+  }
+
+  .site-header[data-open] .nav-toggle__glyph::before {
+    transform: translateY(0) rotate(45deg);
+  }
+
+  .site-header[data-open] .nav-toggle__glyph::after {
+    transform: translateY(-2px) rotate(-45deg);
+  }
+
+  .site-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    margin: 0;
+  }
+
+  .site-nav__link {
+    display: inline-block;
+    padding: 0.4rem 0;
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+    color: var(--text-dim);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .site-nav__link:hover {
+    color: var(--text);
+  }
+
+  .site-nav__link[aria-current='page'] {
+    color: var(--text);
+    box-shadow: inset 0 -2px 0 0 var(--accent);
+  }
+
+  @media (max-width: 47.999rem) {
+    .site-nav {
+      position: fixed;
+      inset: var(--header-h) 0 0;
+      background: var(--bg);
+      border-top: var(--hairline) solid var(--surface-border);
+      padding: var(--space-l) var(--gutter) var(--space-2xl);
+      transform: translateY(-8px);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--dur) var(--ease-out),
+        transform var(--dur) var(--ease-out),
+        visibility 0s linear var(--dur);
+      overflow-y: auto;
+    }
+
+    .site-header[data-open] .site-nav {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+    .site-nav__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-xs);
+    }
+
+    .site-nav__link {
+      font-size: var(--step-1);
+      padding: var(--space-2xs) 0;
+      border-bottom: var(--hairline) solid var(--surface-border);
+    }
+
+    .site-nav__cta {
+      margin-top: var(--space-m);
+    }
+
+    .site-nav__cta .btn {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .nav-toggle {
+      display: none;
+    }
+  }
+
+  :global(html.nav-open) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+
+  if (header && toggle && nav) {
+    const desktop = window.matchMedia('(min-width: 48rem)');
+    let lastFocused: HTMLElement | null = null;
+
+    const focusables = (): HTMLElement[] =>
+      Array.from(nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+
+    const isOpen = (): boolean => toggle.getAttribute('aria-expanded') === 'true';
+
+    function onKeydown(event: KeyboardEvent): void {
+      if (event.key === 'Escape') {
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusables();
+      const first = items[0];
+      const last = items.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function onClickOutside(event: MouseEvent): void {
+      if (header && !header.contains(event.target as Node)) close(false);
+    }
+
+    function open(): void {
+      if (!header || !toggle || !nav) return;
+      lastFocused = document.activeElement as HTMLElement | null;
+      toggle.setAttribute('aria-expanded', 'true');
+      header.setAttribute('data-open', '');
+      document.documentElement.classList.add('nav-open');
+      focusables()[0]?.focus();
+      document.addEventListener('keydown', onKeydown);
+      document.addEventListener('click', onClickOutside, true);
+    }
+
+    function close(returnFocus = true): void {
+      if (!header || !toggle) return;
+      toggle.setAttribute('aria-expanded', 'false');
+      header.removeAttribute('data-open');
+      document.documentElement.classList.remove('nav-open');
+      document.removeEventListener('keydown', onKeydown);
+      document.removeEventListener('click', onClickOutside, true);
+      if (returnFocus) (lastFocused ?? toggle).focus();
+    }
+
+    toggle.addEventListener('click', () => {
+      if (isOpen()) close();
+      else open();
+    });
+
+    nav.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement).closest('a');
+      if (link && !desktop.matches) close(false);
+    });
+
+    desktop.addEventListener('change', (event) => {
+      if (event.matches && isOpen()) close(false);
+    });
+  }
+</script>

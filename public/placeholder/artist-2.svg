@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500" role="img">
+  <defs>
+    <linearGradient id="bg" gradientTransform="rotate(194 0.5 0.5)">
+      <stop offset="0" stop-color="#09090a"/>
+      <stop offset="0.55" stop-color="#14141a"/>
+      <stop offset="1" stop-color="#09090a"/>
+    </linearGradient>
+    <radialGradient id="blob" cx="84.7%" cy="56.49%" r="55.1%">
+      <stop offset="0" stop-color="#77c043" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#77c043" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.84" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+      <feBlend mode="screen" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="1500" fill="url(#bg)"/>
+  <rect width="1200" height="1500" fill="url(#blob)"/>
+  <g font-family="Archivo, Arial, sans-serif" font-weight="800" fill="#f1ece3" fill-opacity="0.05">
+    <text x="237.83" y="1330.91" font-size="1160.69" transform="rotate(-5 237.83 1330.91)">NHÃ</text>
+  </g>
+  <rect x="0" y="873.34" width="1200" height="48.47" fill="#77c043" fill-opacity="0.8" transform="rotate(-5 600 873.34)"/>
+  <rect width="1200" height="1500" filter="url(#grain)" fill="#f1ece3" fill-opacity="0.5"/>
+  <rect x="8" y="8" width="1184" height="1484" fill="none" stroke="#f1ece3" stroke-opacity="0.12" stroke-width="2"/>
+</svg>

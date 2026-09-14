@@ -1,0 +1,99 @@
+/*
+ * KUSH HOUSE — design tokens.
+ * Dark-only by deliberate art direction (`color-scheme: dark`).
+ * Contrast of the text/background pairs below is asserted by
+ * `tests/unit/contrast.test.ts` (WCAG 2.1: >= 4.5 body, >= 3 large/UI).
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Raw palette -------------------------------------------------- */
+  --c-void: #09090a; /* page background */
+  --c-ink: #0f0f12; /* raised surface */
+  --c-smoke: #16161b; /* inset surface */
+  --c-ash: #2a2a31; /* hairlines, chips */
+  --c-bone: #f1ece3; /* primary text */
+  --c-bone-dim: #b0aaa0; /* secondary text (>= 4.5 on --c-void) */
+  --c-ember: #ff6a2b; /* primary accent */
+  --c-ember-bright: #ff8552; /* accent for focus rings / hovers */
+  --c-kush: #77c043; /* secondary accent, used sparingly */
+  --c-danger: #ff6b6b;
+
+  /* ---- Semantic --------------------------------------------------- */
+  --bg: var(--c-void);
+  --bg-raised: var(--c-ink);
+  --bg-inset: var(--c-smoke);
+  --surface-border: color-mix(in oklab, var(--c-bone) 14%, transparent);
+  --surface-border-strong: color-mix(in oklab, var(--c-bone) 26%, transparent);
+
+  --text: var(--c-bone);
+  --text-dim: var(--c-bone-dim);
+  --text-on-accent: #1c0a00; /* near-black on --c-ember: contrast ~7.5 */
+
+  --accent: var(--c-ember);
+  --accent-2: var(--c-kush);
+  --focus-ring: var(--c-ember-bright);
+
+  /* ---- Typography ----------------------------------------------- */
+  --font-display: 'Archivo Variable', 'Archivo', 'Arial Narrow', system-ui, sans-serif;
+  --font-body:
+    'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* Fluid type scale (min 320px viewport -> max ~1280px) */
+  --step--2: clamp(0.7813rem, 0.7614rem + 0.0993vw, 0.84rem);
+  --step--1: clamp(0.8438rem, 0.8091rem + 0.1734vw, 0.945rem);
+  --step-0: clamp(1rem, 0.9457rem + 0.2717vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.1114rem + 0.4429vw, 1.4625rem);
+  --step-2: clamp(1.44rem, 1.3038rem + 0.6809vw, 1.9013rem);
+  --step-3: clamp(1.728rem, 1.5266rem + 1.0072vw, 2.4717rem);
+  --step-4: clamp(2.0736rem, 1.7842rem + 1.4471vw, 3.2131rem);
+  --step-5: clamp(2.4883rem, 2.0777rem + 2.0531vw, 4.177rem);
+  --step-6: clamp(2.986rem, 2.406rem + 2.8999vw, 5.4299rem);
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.6;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.14em;
+
+  /* ---- Space scale --------------------------------------------- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2.25rem;
+  --space-xl: 3.5rem;
+  --space-2xl: 5.5rem;
+  --space-3xl: 8rem;
+
+  /* ---- Layout ------------------------------------------------- */
+  --container: 74rem;
+  --container-narrow: 44rem;
+  --gutter: clamp(1.1rem, 5vw, 3rem);
+  --header-h: 4.25rem;
+  --radius: 3px;
+  --radius-lg: 6px;
+  --hairline: 1px;
+
+  /* ---- Motion ----------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.18s;
+  --dur: 0.42s;
+  --dur-slow: 0.9s;
+
+  /* ---- Effects --------------------------------------------- */
+  --shadow-pop: 0 1px 0 0 var(--surface-border), 0 18px 50px -24px rgb(0 0 0 / 0.7);
+  --grain-opacity: 0.05;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0.001s;
+    --dur: 0.001s;
+    --dur-slow: 0.001s;
+  }
+}

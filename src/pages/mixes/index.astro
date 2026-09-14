@@ -1,0 +1,155 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seo from '../../components/Seo.astro';
+import Chip from '../../components/Chip.astro';
+import { getMixes } from '../../lib/collections';
+import { formatMonthYear } from '../../lib/dates';
+import { breadcrumbSchema } from '../../lib/schema';
+import { SITE } from '../../lib/site';
+
+const mixes = await getMixes();
+const origin = Astro.site ? Astro.site.origin : new URL(SITE.origin).origin;
+const breadcrumb = breadcrumbSchema(
+  [
+    { name: 'Início', path: '/' },
+    { name: 'Mixes', path: '/mixes' },
+  ],
+  origin,
+);
+---
+
+<Base
+  title="Mixes"
+  description="Gravações das noites e sessões dos residentes da KUSH HOUSE."
+  path="/mixes"
+>
+  <Seo schema={breadcrumb} />
+
+  <section class="section" aria-labelledby="mixes-title">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Mixes</p>
+        <h1 id="mixes-title" class="section-head__title display-lg">Para ouvir alto</h1>
+        <p class="lede text-dim">
+          Sets gravados nas noites e sessões soltas. Os players abrem em nova aba — nada roda
+          embutido aqui.
+        </p>
+      </header>
+
+      {
+        mixes.length > 0 ? (
+          <ol class="mixes" role="list">
+            {mixes.map((mix, index) => (
+              <li class="mix" data-reveal>
+                <span class="mix__index" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div class="mix__main">
+                  <h2 class="mix__title">{mix.data.title}</h2>
+                  <p class="mix__meta text-dim">
+                    {mix.data.artist}
+                    <span aria-hidden="true">·</span>
+                    {formatMonthYear(mix.data.date)}
+                    <span aria-hidden="true">·</span>
+                    <span>{mix.data.duration}</span>
+                  </p>
+                  {(mix.data.tags.length > 0 || mix.data.placeholder) && (
+                    <div class="cluster mix__tags">
+                      {mix.data.tags.map((tag) => (
+                        <Chip variant="muted">{tag}</Chip>
+                      ))}
+                      {mix.data.placeholder && <Chip variant="muted">Exemplo</Chip>}
+                    </div>
+                  )}
+                </div>
+                <div class="mix__action">
+                  {mix.data.listenUrl ? (
+                    <a
+                      class="btn btn--ghost"
+                      href={mix.data.listenUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Ouvir<span class="visually-hidden"> (abre em nova aba)</span>
+                    </a>
+                  ) : (
+                    <span class="mix__soon">Em breve</span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="text-dim">Nenhum mix publicado ainda.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .mixes {
+    margin: 0;
+  }
+
+  .mix {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2xs) var(--space-m);
+    align-items: start;
+    padding: var(--space-l) 0;
+    border-top: var(--hairline) solid var(--surface-border);
+  }
+
+  @media (min-width: 44rem) {
+    .mix {
+      grid-template-columns: 3rem 1fr auto;
+      align-items: center;
+    }
+  }
+
+  .mix__index {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .mix__title {
+    font-size: var(--step-2);
+  }
+
+  .mix__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5ch;
+    margin-top: var(--space-3xs);
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .mix__tags {
+    --cluster-gap: var(--space-2xs);
+    margin-top: var(--space-2xs);
+  }
+
+  .mix__action {
+    grid-column: 2 / -1;
+  }
+
+  @media (min-width: 44rem) {
+    .mix__action {
+      grid-column: auto;
+    }
+  }
+
+  .mix__soon {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-dim);
+  }
+</style>

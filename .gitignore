@@ -1,0 +1,21 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# test / tooling artifacts
+coverage/
+playwright-report/
+test-results/
+.playwright/
+install.log
+
+# env & local
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.local

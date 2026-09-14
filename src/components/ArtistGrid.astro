@@ -1,0 +1,321 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Chip from './Chip.astro';
+import { SITE, isConfiguredHref } from '../lib/site';
+
+interface Props {
+  artists: CollectionEntry<'artists'>[];
+}
+
+const { artists } = Astro.props;
+
+const linkLabels: Record<string, string> = {
+  soundcloud: 'SoundCloud',
+  bandcamp: 'Bandcamp',
+  instagram: 'Instagram',
+  ra: 'Resident Advisor',
+};
+
+function externalLinks(links: CollectionEntry<'artists'>['data']['links']) {
+  return Object.entries(links)
+    .filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+    .filter(([, href]) => isConfiguredHref(href));
+}
+---
+
+<ul class="artist-grid" role="list" data-artist-grid>
+  {
+    artists.map((artist) => {
+      const { id, data } = artist;
+      const dialogId = `artist-dialog-${id}`;
+      const titleId = `${dialogId}-title`;
+      const links = externalLinks(data.links);
+      return (
+        <li class="artist-grid__item" data-reveal>
+          <button
+            type="button"
+            class="artist-card"
+            data-artist-open={id}
+            aria-haspopup="dialog"
+            aria-controls={dialogId}
+          >
+            <span class="artist-card__frame">
+              {data.photo ? (
+                <img
+                  src={data.photo}
+                  alt=""
+                  width="600"
+                  height="750"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <span class="artist-card__frame-fallback" aria-hidden="true" />
+              )}
+            </span>
+            <span class="artist-card__name">{data.name}</span>
+            <span class="artist-card__role text-dim">{data.role}</span>
+            {data.genres.length > 0 && (
+              <span class="artist-card__genres text-dim">{data.genres.join(' / ')}</span>
+            )}
+            <span class="artist-card__cue" aria-hidden="true">
+              Ver perfil
+            </span>
+          </button>
+
+          <dialog id={dialogId} class="artist-dialog" aria-labelledby={titleId} data-dialog>
+            <div class="artist-dialog__panel" data-dialog-panel>
+              <button
+                type="button"
+                class="artist-dialog__close"
+                data-dialog-close
+                aria-label="Fechar"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="square"
+                    d="M6 6l12 12M18 6L6 18"
+                  />
+                </svg>
+              </button>
+
+              <p class="eyebrow">{data.role}</p>
+              <h2 id={titleId} class="artist-dialog__name">
+                {data.name}
+              </h2>
+
+              {data.genres.length > 0 && (
+                <div class="cluster artist-dialog__genres">
+                  {data.genres.map((g) => (
+                    <Chip>{g}</Chip>
+                  ))}
+                  {data.placeholder && <Chip variant="muted">Perfil de exemplo</Chip>}
+                </div>
+              )}
+
+              <p class="artist-dialog__bio">{data.bio}</p>
+
+              {links.length > 0 && (
+                <ul class="artist-dialog__links" role="list">
+                  {links.map(([key, href]) => (
+                    <li>
+                      <a href={href} rel="noopener noreferrer" target="_blank">
+                        {linkLabels[key] ?? key}
+                        <span class="visually-hidden"> (abre em nova aba)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {links.length === 0 && (
+                <p class="text-dim artist-dialog__note">
+                  Links de escuta em breve. Enquanto isso, escreva para{' '}
+                  <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+                </p>
+              )}
+            </div>
+          </dialog>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .artist-grid {
+    display: grid;
+    gap: var(--space-l) var(--space-m);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    margin: 0;
+  }
+
+  .artist-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    width: 100%;
+    text-align: left;
+    padding: 0;
+  }
+
+  .artist-card__frame {
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: var(--hairline) solid var(--surface-border);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-xs);
+    background: var(--bg-inset);
+  }
+
+  .artist-card__frame img,
+  .artist-card__frame-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      transform var(--dur) var(--ease-out),
+      filter var(--dur) var(--ease-out);
+    filter: grayscale(0.35) contrast(1.05);
+  }
+
+  .artist-card__frame-fallback {
+    display: block;
+    background:
+      radial-gradient(
+        120% 80% at 20% 10%,
+        color-mix(in oklab, var(--accent) 35%, transparent),
+        transparent 60%
+      ),
+      linear-gradient(200deg, var(--bg-inset), var(--c-void));
+  }
+
+  .artist-card:hover .artist-card__frame img,
+  .artist-card:focus-visible .artist-card__frame img {
+    transform: scale(1.04);
+    filter: grayscale(0) contrast(1.05);
+  }
+
+  .artist-card__name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+  }
+
+  .artist-card__role,
+  .artist-card__genres {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-family: var(--font-display);
+  }
+
+  .artist-card__cue {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .artist-card:hover .artist-card__cue,
+  .artist-card:focus-visible .artist-card__cue {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .artist-card__cue {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .artist-dialog__panel {
+    position: relative;
+    padding: var(--space-xl) var(--space-l) var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .artist-dialog__close {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    color: var(--text-dim);
+    border-radius: var(--radius);
+  }
+
+  .artist-dialog__close:hover {
+    color: var(--text);
+  }
+
+  .artist-dialog__name {
+    font-size: var(--step-4);
+  }
+
+  .artist-dialog__bio {
+    color: var(--text);
+  }
+
+  .artist-dialog__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    margin: var(--space-2xs) 0 0;
+  }
+
+  .artist-dialog__links a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-size: var(--step--1);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  function syncScrollLock(): void {
+    const anyOpen = document.querySelector('dialog[open]') !== null;
+    document.documentElement.classList.toggle('is-modal', anyOpen);
+  }
+
+  for (const grid of document.querySelectorAll<HTMLElement>('[data-artist-grid]')) {
+    grid.addEventListener('click', (event) => {
+      const trigger = (event.target as HTMLElement).closest<HTMLButtonElement>(
+        '[data-artist-open]',
+      );
+      if (!trigger) return;
+      const dialog = document.getElementById(`artist-dialog-${trigger.dataset.artistOpen}`);
+      if (dialog instanceof HTMLDialogElement) {
+        dialog.showModal();
+        syncScrollLock();
+      }
+    });
+  }
+
+  for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog[data-dialog]')) {
+    const panel = dialog.querySelector<HTMLElement>('[data-dialog-panel]');
+
+    dialog.addEventListener('click', (event) => {
+      if (!panel) return;
+      const rect = panel.getBoundingClientRect();
+      const outside =
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom;
+      if (outside) dialog.close();
+    });
+
+    dialog
+      .querySelector<HTMLButtonElement>('[data-dialog-close]')
+      ?.addEventListener('click', () => dialog.close());
+
+    dialog.addEventListener('close', syncScrollLock);
+  }
+</script>

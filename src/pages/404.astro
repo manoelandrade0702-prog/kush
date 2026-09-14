@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import ArrowLink from '../components/ArrowLink.astro';
+import { NAV } from '../lib/site';
+---
+
+<Base
+  title="Página não encontrada"
+  description="Esse link não leva a lugar nenhum."
+  path="/404"
+  noindex
+>
+  <section class="section notfound" aria-labelledby="nf-title">
+    <div class="container">
+      <p class="eyebrow">Erro 404</p>
+      <h1 id="nf-title" class="display-xl">Beco sem saída</h1>
+      <p class="lede text-dim">
+        A página que você procurou saiu de cartaz ou nunca existiu. Volte para a pista.
+      </p>
+
+      <ul class="notfound__links" role="list">
+        <li><ArrowLink href="/">Início</ArrowLink></li>
+        {
+          NAV.map((item) => (
+            <li>
+              <ArrowLink href={item.href}>{item.label}</ArrowLink>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .notfound__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    margin-top: var(--space-xl);
+  }
+</style>

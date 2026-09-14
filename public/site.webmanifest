@@ -1,0 +1,21 @@
+{
+  "name": "KUSH HOUSE",
+  "short_name": "KUSH HOUSE",
+  "description": "Coletivo de música e a série de festas que ele realiza.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#09090a",
+  "theme_color": "#09090a",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/favicon.png", "type": "image/png", "sizes": "96x96" },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "maskable"
+    }
+  ]
+}

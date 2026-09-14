@@ -1,0 +1,21 @@
+---
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+// Doubled so the -50% keyframe loops seamlessly.
+const loop = [...items, ...items];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    {
+      loop.map((item, i) => (
+        <span class="marquee__item" data-accent={i % 4 === 2 ? '' : undefined}>
+          {item}
+        </span>
+      ))
+    }
+  </div>
+</div>

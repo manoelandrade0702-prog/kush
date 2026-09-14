@@ -1,0 +1,63 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import EventCard from './EventCard.astro';
+import ArrowLink from './ArrowLink.astro';
+
+interface Props {
+  event?: CollectionEntry<'events'> | undefined;
+  upcomingCount: number;
+}
+
+const { event, upcomingCount } = Astro.props;
+const others = Math.max(0, upcomingCount - 1);
+---
+
+<section id="proxima" class="section" aria-labelledby="proxima-title">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="eyebrow">Próxima noite</p>
+      <h2 id="proxima-title" class="section-head__title display-lg">
+        {event ? 'Já tem data' : 'Ainda sem data marcada'}
+      </h2>
+    </header>
+
+    {
+      event ? (
+        <div class="home-next">
+          <EventCard event={event} featured headingLevel={3} />
+          {others > 0 && (
+            <p class="home-next__more" data-reveal>
+              <ArrowLink href="/events">
+                {`Mais ${others} ${others === 1 ? 'noite' : 'noites'} na agenda`}
+              </ArrowLink>
+            </p>
+          )}
+        </div>
+      ) : (
+        <div class="home-next__empty" data-reveal>
+          <p class="lede">
+            Nenhuma festa no calendário neste momento. A próxima é anunciada primeiro para a lista.
+          </p>
+          <p>
+            <ArrowLink href="#lista">Entrar na lista</ArrowLink>
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .home-next__more {
+    margin-top: var(--space-l);
+  }
+
+  .home-next__empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    padding: var(--space-xl);
+    border: var(--hairline) dashed var(--surface-border-strong);
+    border-radius: var(--radius-lg);
+  }
+</style>
