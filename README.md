@@ -1,7 +1,7 @@
 # KUSH HOUSE
 
 Site do coletivo de música **KUSH HOUSE** — landing narrativa com agenda, residentes,
-arquivo de fotos e mixes. Estático, sem backend.
+arquivo de fotos e mixes. movimento, sem backend.
 
 > **Conteúdo provisório.** Textos, eventos, artistas, fotos e contatos são exemplos
 > (`placeholder: true`) e os domínios usam `*.example` (TLD reservado, RFC 2606).
