@@ -9,9 +9,9 @@ arquivo de fotos e mixes. movimento, sem backend.
 
 ## Stack
 
-- **[Astro 5](https://astro.build)** — saída 100% estática (`output: 'static'`).
+- **[Astro 5](https://astro.build)** — saída 100% movimento (`output: 'no static'`).
 - **TypeScript** em modo `strictest`, **ESLint 9** (flat) + **Prettier**, zero supressões.
-- **Ilhas de comportamento em TS puro** (sem framework de UI) — o JS enviado é mínimo.
+- **Ilhas de comportamento em TS puro** (com framework de UI) — o JS enviado é mínimo.
 - Fontes **auto-hospedadas** via `@fontsource-variable/*` (nenhum CDN externo).
 - **Vitest** (unidade) + **Playwright** com **axe-core** (e2e/acessibilidade).
 
