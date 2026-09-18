@@ -23,15 +23,23 @@ propagando, texto que "liga" como um circuito, cards que reagem ao cursor.
 
 ## 2. Sistema de design
 
-### Paleta
-- `--bg`: `#0A0A0A` (preto quase puro, base de todas as seções)
-- `--bg-alt`: `#111111` (leve variação entre seções, textura de ruído por cima)
-- `--neon`: `#B6FF2E` (verde-limão elétrico — cor de destaque, CTAs, glows)
-- `--neon-dim`: `#8FE01A` (variação para hover/estados menos intensos)
-- `--white`: `#F5F5F5` (títulos e textos primários)
-- `--gray`: `#8A8F87` (parágrafos, legendas, labels secundárias)
-- `--border`: `rgba(255,255,255,0.08)` (linhas e bordas de cards)
-- Glow padrão: `box-shadow: 0 0 24px rgba(182,255,46,0.45)` em elementos ativos.
+### Paleta oficial TAPX
+- `--neon`: `#B7FF00` — verde TAPX principal (CTAs, sublinhados, números de etapa, ícones ativos)
+- `--neon-glow`: `#9EFF00` — verde elétrico/glow (usado em `box-shadow`/`text-shadow`, halos pulsantes, anéis de sinal NFC)
+- `--bg`: `#050505` — preto principal (base de todas as seções)
+- `--bg-alt`: `#0A0A0A` — preto secundário (variação sutil entre seções/blocos)
+- `--card`: `#101010` — fundo de cards
+- `--white`: `#F5F5F0` — branco principal (títulos, texto primário)
+- `--gray-light`: `#D8D8D2` — branco/cinza secundário (subtítulos, textos de apoio)
+- `--gray`: `#777777` — cinza (parágrafos, legendas, labels secundárias)
+- `--border`: `rgba(245,245,240,0.08)` (linhas e bordas de cards, sobre `--card`)
+- Glow padrão: `box-shadow: 0 0 24px rgba(158,255,0,0.45)` em elementos ativos.
+
+**Proporção de uso (identidade premium):** ~**80% preto/grafite** (`--bg`,
+`--bg-alt`, `--card`) + ~**12% branco/cinza** (`--white`, `--gray-light`,
+`--gray` em textos e ícones) + ~**8% verde TAPX** (`--neon`/`--neon-glow`,
+reservado para CTAs, glows, acentos e estados ativos — nunca usado como cor
+de preenchimento de grandes áreas, sempre como destaque pontual e luminoso).
 
 ### Tipografia
 - Display/headlines: sans condensada **ultra-bold**, caixa alta, tracking
@@ -220,7 +228,7 @@ divisor fino.
   bem discreto.
 - Lista de segmentos: cada linha entra com fade+translateX(-16px→0) em
   stagger 90ms conforme a seção entra em viewport.
-- Hover em cada linha: fundo ganha leve tint verde (`rgba(182,255,46,0.05)`),
+- Hover em cada linha: fundo ganha leve tint verde (`rgba(183,255,0,0.05)`),
   seta "→" desliza para a direita, texto da ação acende em verde mais forte.
 - Divisores entre linhas "desenham-se" da esquerda para a direita
   (`scaleX 0→1`) na entrada, como se fossem circuitos sendo traçados.
