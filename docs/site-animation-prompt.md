@@ -5,6 +5,13 @@
 > (v0, Lovable, Cursor, Claude, etc.) ou para um time de design/dev construir a
 > landing page reproduzindo fielmente o visual e comportamento do mockup, com
 > **cada seção animada** (entrada, scroll, hover e efeitos ambientes contínuos).
+>
+> **Estrutura comercial:** a arquitetura de seções foi ajustada para seguir o
+> modelo de landing page de venda de produto (referência: páginas de
+> maquininha de cartão como Stone/Ton) — hero com produto + preço + CTA forte,
+> comparativo de planos, simulador interativo de resultado e bloco de prova
+> social/depoimentos/FAQ — mas **toda a linguagem visual continua 100% TAPX**
+> (preto + verde neon, vidro/cromo 3D, tags estilo terminal).
 
 ---
 
@@ -112,7 +119,7 @@ verde "QUERO MINHA TAPX →" à direita.
   rotação 45°/-45° das duas linhas; menu mobile entra em *slide* da direita com
   overlay preto 80% opacidade + blur.
 
-### 4.2 Hero — "ENCOSTOU. RESOLVEU."
+### 4.2 Hero — "ENCOSTOU. RESOLVEU." (com vitrine de produto)
 **Layout:** tag `▪ TAPX://CONNECT`; título em duas linhas ("ENCOSTOU." branco,
 "RESOLVEU." verde neon); parágrafo cinza; dois CTAs (preenchido verde
 "CONHEÇA A TAPX →" / outline branco "VER PRODUTOS"); rail de 6 ícones+labels
@@ -121,6 +128,14 @@ verde "QUERO MINHA TAPX →" à direita.
 rachada com veios luminosos. Topo direito: tag `● TAPX SYSTEM` + "NFC / QR" +
 "ONLINE" (piscando) e a frase "O MUNDO FÍSICO. CONECTADO." Rodapé direito:
 "SCROLL TO CONNECT" na vertical + seta.
+
+**Cartão de produto flutuante (estilo "vitrine", inspirado em landing de
+maquininha):** sobre o monumento 3D, um card de vidro fosco (`backdrop-filter:
+blur`) ancorado no canto inferior esquerdo do "X", contendo: foto pequena do
+produto físico (a tag/pingente TAPX), preço em destaque ("a partir de
+**R$ 49**"), e um botão pill compacto "PEDIR AGORA →". É o elemento que dá o
+empurrão comercial direto no primeiro dobra, sem descaracterizar o hero
+institucional.
 
 **Animações:**
 - Título: cada linha entra com **clip-path wipe** (de baixo pra cima) +
@@ -143,6 +158,12 @@ rachada com veios luminosos. Topo direito: tag `● TAPX SYSTEM` + "NFC / QR" +
 - "SCROLL TO CONNECT": seta com bounce vertical infinito (`translateY 0↔8px`,
   1.4s `ease-in-out`), some com fade ao passar dos primeiros 100px de scroll.
 - Textura de fundo (rocha superior esquerda): parallax leve inverso ao scroll.
+- **Cartão de produto flutuante:** entra por último na sequência do hero (depois
+  do "X" emergir), com fade+scale (0.9→1) e um leve `translateY` de baixo pra
+  cima, como se "pousasse" sobre a rocha; flutua em loop suave contínuo
+  (`translateY ±4px`, 3.5s `ease-in-out`, sensação de objeto levitando); no
+  hover, para de flutuar, ganha glow verde na borda e o botão "PEDIR AGORA →"
+  aplica o mesmo preenchimento deslizante dos outros CTAs.
 
 ### 4.3 "Um toque. Infinitas possibilidades." (NFC/QR)
 **Layout:** à esquerda, foto de mão segurando celular próximo a um disco NFC
@@ -189,7 +210,51 @@ celular ilustrando a etapa (radar procurando tag → toque com glow → tela
 - Hover em qualquer card: eleva-se (`translateY -6px`), borda acende verde,
   sombra suave aumenta — transição 0.25s.
 
-### 4.5 "Conheça o ecossistema TAPX." (Soluções)
+### 4.5 "Escolha seu TAPX." (Planos e modelos — comparativo)
+**Layout:** tag `▪ ESCOLHA SEU TAPX`; título "ENCONTRE O SEU." branco /
+"TOQUE IDEAL." verde. Abaixo, 3 cards de modelo lado a lado (ex.: **TAPX TAG**
+— pingente básico, **TAPX CARD** — cartão inteligente, **TAPX BUSINESS** — kit
+para negócios), cada card com: foto do produto, nome, preço em destaque
+("a partir de R$ XX"), checklist de recursos com ícone de check verde, e botão
+"PEDIR AGORA →". O card central (mais vendido) tem borda verde e um selo
+flutuante "MAIS PEDIDO".
+
+**Animações:**
+- Cards entram em stagger (0.12s cada), fade+translateY; o card central entra
+  por último com leve *overshoot* de escala (0.92→1.03→1) para chamar atenção.
+- Selo "MAIS PEDIDO": pulsa (`scale 1↔1.05`, loop 2s) com leve rotação
+  oscilante (-4°↔4°), como uma etiqueta pendurada.
+- Preço: dígitos fazem um "roll" tipo odômetro (0 → valor final, ~0.6s) na
+  primeira vez que o card entra em viewport.
+- Checklist: cada ✓ verde faz *pop-in* sequencial (stagger 40ms) com o traço do
+  ícone se desenhando (`stroke-dashoffset 1→0`).
+- Hover no card: eleva (`translateY -8px`), glow verde na borda intensifica, a
+  foto do produto sobe levemente (`translateY -4px`) para dar profundidade.
+- Se houver toggle (ex.: "unidade" / "kit com 3"): troca de preço com
+  crossfade + roll de dígitos, 0.3s.
+
+### 4.6 "Quanto vale um toque?" (Simulador interativo)
+**Layout:** tag `▪ SIMULE O IMPACTO`; título "VEJA O QUANTO" branco /
+"VOCÊ GANHA." verde. À esquerda, um slider ("Quantos clientes por dia?") e um
+seletor de tipo de negócio (Restaurante, Loja, Clínica, Salão...). À direita,
+um painel estilo terminal/HUD com resultados calculados ao vivo — ex.: "+X
+avaliações no Google/mês", "+Y seguidores/mês", "Z minutos economizados/dia" —
+e um CTA "QUERO ESSE RESULTADO →" logo abaixo.
+
+**Animações:**
+- Ao arrastar o slider, os números do painel fazem **count-up/count-down
+  fluido em tempo real** (via `requestAnimationFrame`, sem "pulo" de dígitos).
+- O glow da borda do painel de resultado "respira" com intensidade
+  proporcional ao valor simulado — quanto maior o número, mais forte o brilho
+  (feedback visual de "resultado bom").
+- Troca de tipo de negócio: crossfade + leve slide dos ícones/resultados
+  (0.3s), como troca de canal em uma tela.
+- Handle do slider: ao arrastar, deixa um pequeno rastro de partículas verdes
+  que se dissolve em 0.4s.
+- O CTA abaixo do painel pulsa suavemente quando o resultado simulado ultrapassa
+  um limiar "alto", reforçando urgência sem ser agressivo.
+
+### 4.7 "Conheça o ecossistema TAPX." (Soluções)
 **Layout:** título + parágrafo à esquerda; à direita, "TAPX" gigante em
 watermark translúcido no fundo, tag "MESMA TECNOLOGIA. / INFINITAS
 APLICAÇÕES." e código `[ TAPX_001 ]`. Abaixo, grade de 6 cards de produto
@@ -213,7 +278,30 @@ curta e link "SAIBA MAIS →".
   round-robin; TAPX PAY — pequeno ícone de cartão "desliza" em loop lento;
   TAPX HOME — luz ambiente da sala pulsa suavemente.
 
-### 4.6 "Sua empresa. A um toque." (Business)
+### 4.8 Prova social, depoimentos e perguntas frequentes
+**Layout:**
+- Bloco de 3–4 números em destaque ("+XX mil toques/mês", "+X mil negócios
+  conectados", "4.9★ avaliação média", "98% resolvem em menos de 3s"), em
+  tipografia grande branca/verde.
+- Carrossel horizontal de depoimentos: cards com avatar, nome, tipo de
+  negócio, citação curta e estrelas.
+- FAQ em accordion ("Preciso de internet para usar?", "Funciona em qualquer
+  celular?", "Quanto tempo dura a tag?", "Dá para trocar o link depois?").
+
+**Animações:**
+- Números: **count-up** ao entrar em viewport (0 → valor final, `ease-out`,
+  ~1.2s); estrelas de avaliação se preenchem com um *wipe* da esquerda para a
+  direita.
+- Carrossel: autoplay lento (4s/slide), pausa no hover/foco; transição
+  slide+fade; setas com o mesmo hover magnético dos botões pill; dot ativo em
+  verde com `scaleX` maior que os demais.
+- Accordion do FAQ: o `+` gira 45° virando `×` (`transition: 0.25s`); o
+  conteúdo expande com altura animada (técnica `grid-template-rows: 0fr → 1fr`,
+  sem JS de altura); leve fade+slide do texto interno ao abrir.
+- Pergunta fechada em hover: fundo clareia sutilmente (`--card` mais claro) e
+  borda esquerda acende em verde.
+
+### 4.9 "Sua empresa. A um toque." (Business)
 **Layout:** título + parágrafo à esquerda sobre foto de bar/restaurante à
 noite; à direita, lista vertical de segmentos (RESTAURANTE/BAR → AVALIAR NO
 GOOGLE, CLÍNICA → CHAMAR NO WHATSAPP, LOJA → SEGUIR NO INSTAGRAM, HOTEL →
@@ -233,7 +321,28 @@ divisor fino.
 - Divisores entre linhas "desenham-se" da esquerda para a direita
   (`scaleX 0→1`) na entrada, como se fossem circuitos sendo traçados.
 
-### 4.7 Rodapé (se existir, não mostrado no mockup mas recomendado)
+### 4.10 CTA final / fechamento
+**Layout:** faixa de largura total, fundo preto puro com o "X" gigante em
+outline fino ao fundo (marca d'água bem sutil), título curto e direto ("SEU
+NEGÓCIO. UM TOQUE. AGORA.") e botão CTA grande centralizado "QUERO MINHA TAPX
+→", com texto pequeno de reforço abaixo (frete grátis / garantia / entrega
+rápida).
+
+Em mobile, replicar como **barra fixa inferior** (sticky bottom CTA): aparece
+assim que o CTA do hero sai da viewport e some de novo perto do rodapé —
+mesmo padrão usado em páginas de maquininha de cartão, mantendo preço + CTA
+sempre à mão.
+
+**Animações:**
+- "X" de fundo: rotação contínua lentíssima (360° em ~60s), bem discreta.
+- Título: mesmo wipe/blur-to-focus dos outros headlines, sem stagger (frase
+  única, mais impacto).
+- Botão CTA: pulso de glow mais intenso que os demais CTAs do site (reforço de
+  "última chamada"), mantendo o efeito magnético padrão.
+- Barra fixa mobile: entra com `translateY(100%→0)` + fade ao passar da hero,
+  sai com o inverso ao aproximar do rodapé (via `IntersectionObserver`).
+
+### 4.11 Rodapé (se existir, não mostrado no mockup mas recomendado)
 - Mesmo padrão de reveal, com o "X" da marca reaparecendo em outline fino e
   fixo, glow leve ao passar o mouse por cima (elemento decorativo).
 
@@ -253,6 +362,17 @@ divisor fino.
   reais na maioria dos casos).
 - **Cursor customizado:** elemento fixo controlado via `mousemove` com lerp,
   ou biblioteca leve (ex.: `cuberto`-style custom cursor).
+- **Contadores/odômetro** (preços, estatísticas de prova social): GSAP
+  `ScrollTrigger` + `gsap.to` num objeto proxy, ou uma lib leve tipo
+  `odometer`/`countUp.js`.
+- **Carrossel de depoimentos:** Embla Carousel ou Swiper (leves, sem travar o
+  scroll principal), com autoplay pausável.
+- **Accordion do FAQ:** elemento nativo `<details>/<summary>` estilizado (
+  acessível por padrão, funciona sem JS) com a técnica CSS `grid-template-rows`
+  para a altura animada — evita reflow via JS.
+- **Slider do simulador:** `<input type="range">` estilizado, com o cálculo em
+  JS puro/TS (sem necessidade de framework) atualizando os contadores via
+  `requestAnimationFrame`.
 - **Acessibilidade:** todos os loops/parallax devem checar
   `window.matchMedia('(prefers-reduced-motion: reduce)')` e cair para
   transições estáticas/curtas; manter contraste AA (texto cinza sobre preto já
@@ -266,12 +386,16 @@ divisor fino.
 
 ## 6. Resumo do "mood" para a IA geradora
 
-> "Landing page escura, cinematográfica e tecnológica para a marca TAPX (NFC).
-> Preto absoluto + verde-limão neon, tipografia condensada em caixa alta,
-> elementos de vidro/cromo 3D com glow interno, tags estilo terminal/HUD. Cada
-> seção deve parecer um circuito que liga: textos entram com wipe e leve blur,
-> ícones e cards fazem stagger, sinais NFC pulsam em anéis concêntricos
-> infinitos, botões têm efeito magnético e preenchimento deslizante, cards de
-> produto fazem tilt 3D no hover, e o logotipo 'X' reage à posição do mouse
-> como um objeto físico iluminado. Scroll suave e cinematográfico do início ao
-> fim, com parallax discreto e respeito total a `prefers-reduced-motion`."
+> "Landing page escura, cinematográfica e tecnológica para a marca TAPX (NFC),
+> com estrutura comercial de página de venda (hero com produto + preço + CTA,
+> comparativo de planos, simulador interativo de resultado, prova social e
+> FAQ — como em landings de maquininha de cartão). Preto absoluto + verde-limão
+> neon, tipografia condensada em caixa alta, elementos de vidro/cromo 3D com
+> glow interno, tags estilo terminal/HUD. Cada seção deve parecer um circuito
+> que liga: textos entram com wipe e leve blur, ícones e cards fazem stagger,
+> sinais NFC pulsam em anéis concêntricos infinitos, botões têm efeito
+> magnético e preenchimento deslizante, cards de produto fazem tilt 3D no
+> hover, preços e estatísticas fazem count-up/odômetro, e o logotipo 'X' reage
+> à posição do mouse como um objeto físico iluminado. Scroll suave e
+> cinematográfico do início ao fim, com parallax discreto e respeito total a
+> `prefers-reduced-motion`."
